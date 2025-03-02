@@ -1,43 +1,70 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { auth } from "../firebase";
-import { signOut } from "firebase/auth";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../firebase"; // Import Firebase Auth
+import { onAuthStateChanged } from "firebase/auth";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Check if user is authenticated
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    // Check authentication status
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        navigate("/login"); // Redirect if not logged in
+        navigate("/login"); // Redirect if not authenticated
       } else {
         setUser(user);
       }
     });
+
     return () => unsubscribe();
   }, [navigate]);
 
-  // Logout function
-  const handleLogout = async () => {
-    await signOut(auth);
-    navigate("/login"); // Redirect to login after logout
-  };
+  if (!user) {
+    return null; // Prevent flickering before redirection
+  }
 
-  return user ? (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <h1 className="text-3xl font-bold">Welcome, {user.email}</h1>
-      <p className="text-gray-600 mt-2">You are now logged in.</p>
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Hero Section */}
+      <div className="container mx-auto px-6 py-16 text-center">
+        <h1 className="text-5xl font-bold">Welcome to Your Dashboard</h1>
+        <p className="mt-4 text-lg text-gray-600">
+          Track your impact and manage your waste-to-wealth activities.
+        </p>
+      </div>
 
-      <button
-        onClick={handleLogout}
-        className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-      >
-        Logout
-      </button>
+      {/* Environmental Impact Metrics */}
+      <div className="container mx-auto px-6 grid md:grid-cols-3 gap-6">
+        <div className="bg-white p-6 rounded-lg shadow-md text-center">
+          <h3 className="text-lg font-semibold">
+            Waste Diverted from Landfills
+          </h3>
+          <p className="text-4xl font-bold mt-2">24,568 kg</p>
+          <p className="text-green-600 text-sm">+20.1% from last month</p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md text-center">
+          <h3 className="text-lg font-semibold">CO₂ Emissions Prevented</h3>
+          <p className="text-4xl font-bold mt-2">12,345 kg</p>
+          <p className="text-green-600 text-sm">+15.3% from last month</p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md text-center">
+          <h3 className="text-lg font-semibold">Active Community Members</h3>
+          <p className="text-4xl font-bold mt-2">5,280</p>
+          <p className="text-green-600 text-sm">+32.5% from last month</p>
+        </div>
+      </div>
+
+      {/* Link to Impact Page */}
+      <div className="container mx-auto px-6 py-10 text-center">
+        <Link to="/impact">
+          <button className="bg-black text-white px-6 py-3 rounded-md">
+            View Gamification & Eco-Rewards
+          </button>
+        </Link>
+      </div>
     </div>
-  ) : null;
+  );
 };
 
 export default Dashboard;

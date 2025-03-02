@@ -8,12 +8,14 @@ import LearnMore from "./pages/LearnMore";
 import Guide from "./pages/Guide";
 import Marketplace from "./pages/Marketplace";
 import Impact from "./pages/Impact";
+import DonationCenter from "./pages/DonationCentre";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/donate" element={<DonationCenter />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
