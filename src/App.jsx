@@ -10,6 +10,7 @@ import Marketplace from "./pages/Marketplace";
 import Impact from "./pages/Impact";
 import DonationCenter from "./pages/DonationCentre";
 import SellProduct from "./pages/SellProduct";
+import Scanner from "./pages/Scanner";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/learnmore" element={<LearnMore />} />
         <Route path="/impact" element={<Impact />} />
         <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/scanner" element={<Scanner />} />
       </Routes>
     </Router>
   );

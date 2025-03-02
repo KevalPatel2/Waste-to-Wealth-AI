@@ -55,7 +55,7 @@ const LandingPage = () => {
         <div className="grid md:grid-cols-3 gap-6 mt-3">
           {/* AI Waste Classification */}
           <Link
-            to="/dashboard"
+            to="/scanner"
             className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center hover:shadow-lg transition"
           >
             <CameraIcon className="w-12 h-12 text-green-600" />
