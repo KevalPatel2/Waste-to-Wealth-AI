@@ -16,6 +16,7 @@ const Impact = () => {
   const [user, setUser] = useState(null);
   const [ecoCredits, setEcoCredits] = useState(0);
   const [ecoLevel, setEcoLevel] = useState(1);
+  const [tasksCompleted, setTasksCompleted] = useState(0);
   const [weeklyTasks, setWeeklyTasks] = useState([]);
   const navigate = useNavigate();
 
@@ -33,7 +34,7 @@ const Impact = () => {
     return () => unsubscribe();
   }, [navigate]);
 
-  // Fetch user eco-level and credits from Firestore
+  // Fetch user eco-level, credits, and tasks completed count from Firestore
   const fetchUserData = async (userId) => {
     const userRef = doc(db, "users", userId);
     const userSnap = await getDoc(userRef);
@@ -41,10 +42,12 @@ const Impact = () => {
     if (userSnap.exists()) {
       setEcoLevel(userSnap.data().ecoLevel || 1);
       setEcoCredits(userSnap.data().ecoCredits || 0);
+      setTasksCompleted(userSnap.data().tasksCompleted || 0);
     } else {
-      await setDoc(userRef, { ecoLevel: 1, ecoCredits: 0 });
+      await setDoc(userRef, { ecoLevel: 1, ecoCredits: 0, tasksCompleted: 0 });
       setEcoLevel(1);
       setEcoCredits(0);
+      setTasksCompleted(0);
     }
   };
 
@@ -109,25 +112,27 @@ const Impact = () => {
     setWeeklyTasks(tasks);
   };
 
-  // Complete a task and earn ecoCredits
+  // Complete a task and update Firestore
   const completeTask = async (taskId, points) => {
     if (!user) return;
 
     const taskRef = doc(db, "users", user.uid, "tasks", taskId);
-    await updateDoc(taskRef, { completed: true });
+    await updateDoc(taskRef, {
+      completed: true,
+    });
+
+    const newCredits = ecoCredits + points;
+    const newTasksCompleted = tasksCompleted + 1;
 
     const userRef = doc(db, "users", user.uid);
-    const newCredits = ecoCredits + points;
-
-    let newLevel = ecoLevel;
-    if (newCredits >= 500 && ecoLevel < 2) newLevel = 2;
-    if (newCredits >= 1000 && ecoLevel < 3) newLevel = 3;
-    if (newCredits >= 2000 && ecoLevel < 4) newLevel = 4;
-
-    await updateDoc(userRef, { ecoCredits: newCredits, ecoLevel: newLevel });
+    await updateDoc(userRef, {
+      ecoCredits: newCredits,
+      tasksCompleted: newTasksCompleted,
+    });
 
     setEcoCredits(newCredits);
     setEcoLevel(newLevel);
+    setTasksCompleted(newTasksCompleted);
     setWeeklyTasks(
       weeklyTasks.map((task) =>
         task.id === taskId ? { ...task, completed: true } : task

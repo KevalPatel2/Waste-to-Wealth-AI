@@ -28,7 +28,7 @@ const Signup = () => {
         ecoCredits: 0,
         wasteReduced: 0,
         tasksCompleted: 0,
-        ecoRank: "Beginner",
+        ecolevel: 0,
       });
 
       navigate("/dashboard"); // Redirect after signup
