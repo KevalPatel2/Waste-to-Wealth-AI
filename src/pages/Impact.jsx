@@ -225,15 +225,28 @@ const Impact = () => {
                     +{task.points} Eco-Credits
                   </p>
                 </div>
-                {!task.completed ? (
-                  <button
-                    onClick={() => completeTask(task.id, task.points)}
-                    className="bg-green-600 text-white px-4 py-2 rounded-md"
-                  >
-                    Mark as Completed
-                  </button>
-                ) : (
+
+                {task.pendingApproval ? (
+                  <p className="text-sm text-yellow-600">⏳ Pending Approval</p>
+                ) : task.completed ? (
                   <p className="text-sm text-gray-700">✅ Completed</p>
+                ) : (
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleFileChange(task.id, e.target.files[0])
+                      }
+                      className="text-sm"
+                    />
+                    <button
+                      onClick={() => submitProof(task.id)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-md mt-2"
+                    >
+                      Submit Proof
+                    </button>
+                  </div>
                 )}
               </div>
             ))}
