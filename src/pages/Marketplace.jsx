@@ -76,7 +76,8 @@ const Marketplace = () => {
                 <h3 className="text-xl font-bold">{product.name}</h3>
                 <p className="text-gray-600">{product.description}</p>
                 <p className="text-lg font-semibold mt-2">
-                  ${product.price ? Number(product.price).toFixed(2) : "N/A"}
+                  {product.price ? Number(product.price).toFixed(2) : "N/A"}{" "}
+                  Eco-Points
                 </p>
               </div>
             ))

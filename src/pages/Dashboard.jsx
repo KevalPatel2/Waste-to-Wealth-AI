@@ -1,69 +1,121 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { auth } from "../firebase"; // Import Firebase Auth
+import { auth, db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
+  const [stats, setStats] = useState({
+    ecoCredits: 0,
+    wasteReduced: 0,
+    tasksCompleted: 0,
+    ecoRank: "Beginner",
+  });
   const navigate = useNavigate();
 
+  // Fetch user stats from Firestore
   useEffect(() => {
-    // Check authentication status
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        navigate("/login"); // Redirect if not authenticated
+        navigate("/login");
       } else {
         setUser(user);
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          setStats(userSnap.data());
+        }
       }
     });
 
     return () => unsubscribe();
   }, [navigate]);
 
-  if (!user) {
-    return null; // Prevent flickering before redirection
-  }
+  if (!user) return null;
 
   return (
     <div>
       <Navbar />
-      <div className="min-h-screen bg-gray-100">
-        {/* Hero Section */}
-        <div className="container mx-auto px-6 py-16 text-center">
-          <h1 className="text-5xl font-bold">Welcome to Your Dashboard</h1>
-          <p className="mt-4 text-lg text-gray-600">
-            Track your impact and manage your waste-to-wealth activities.
+      <div className="min-h-screen bg-gray-100 p-6">
+        <div className="container mx-auto text-center mb-8">
+          <h1 className="text-4xl font-bold">
+            Welcome, {user.displayName || "Eco Hero"}! 🌍
+          </h1>
+          <p className="mt-2 text-lg text-gray-600">
+            Your sustainability journey at a glance.
           </p>
         </div>
 
-        {/* Environmental Impact Metrics */}
-        <div className="container mx-auto px-6 grid md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <h3 className="text-lg font-semibold">
-              Waste Diverted from Landfills
-            </h3>
-            <p className="text-4xl font-bold mt-2">24,568 kg</p>
-            <p className="text-green-600 text-sm">+20.1% from last month</p>
+        {/* Bento Grid Layout */}
+        <div className="grid md:grid-cols-3 gap-6 p-6">
+          {/* Eco Credits */}
+          <div className="bg-green-500 text-white p-6 rounded-lg shadow-md flex flex-col justify-center items-center">
+            <h2 className="text-2xl font-bold">🌿 Eco Credits</h2>
+            <p className="text-4xl font-semibold">{stats.ecoCredits}</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <h3 className="text-lg font-semibold">CO₂ Emissions Prevented</h3>
-            <p className="text-4xl font-bold mt-2">12,345 kg</p>
-            <p className="text-green-600 text-sm">+15.3% from last month</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <h3 className="text-lg font-semibold">Active Community Members</h3>
-            <p className="text-4xl font-bold mt-2">5,280</p>
-            <p className="text-green-600 text-sm">+32.5% from last month</p>
-          </div>
-        </div>
 
-        {/* Link to Impact Page */}
-        <div className="container mx-auto px-6 py-10 text-center">
-          <Link to="/impact">
-            <button className="bg-black text-white px-6 py-3 rounded-md">
-              View Gamification & Eco-Rewards
-            </button>
+          {/* Waste Reduced */}
+          <div className="bg-blue-500 text-white p-6 rounded-lg shadow-md flex flex-col justify-center items-center">
+            <h2 className="text-2xl font-bold">♻ Waste Reduced</h2>
+            <p className="text-4xl font-semibold">{stats.wasteReduced} kg</p>
+          </div>
+
+          {/* Tasks Completed */}
+          <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-md flex flex-col justify-center items-center">
+            <h2 className="text-2xl font-bold">🎯 Tasks Completed</h2>
+            <p className="text-4xl font-semibold">{stats.tasksCompleted}</p>
+          </div>
+
+          {/* Eco Rank */}
+          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-md flex flex-col justify-center items-center">
+            <h2 className="text-2xl font-bold">🏆 Eco Rank</h2>
+            <p className="text-4xl font-semibold">{stats.ecoRank}</p>
+          </div>
+
+          {/* Waste Classification */}
+          <Link
+            to="/scanner"
+            className="bg-white p-6 rounded-lg shadow-md flex flex-col justify-center items-center hover:bg-gray-200 transition"
+          >
+            <h2 className="text-xl font-bold">🗑️ Waste Classification</h2>
+            <p className="text-gray-600 mt-2 text-center">
+              Scan and classify your waste.
+            </p>
+          </Link>
+
+          {/* Upcycling Guide */}
+          <Link
+            to="/guide"
+            className="bg-white p-6 rounded-lg shadow-md flex flex-col justify-center items-center hover:bg-gray-200 transition"
+          >
+            <h2 className="text-xl font-bold">🔄 Upcycling Guide</h2>
+            <p className="text-gray-600 mt-2 text-center">
+              Learn how to upcycle household waste.
+            </p>
+          </Link>
+
+          {/* Marketplace */}
+          <Link
+            to="/marketplace"
+            className="bg-white p-6 rounded-lg shadow-md flex flex-col justify-center items-center hover:bg-gray-200 transition"
+          >
+            <h2 className="text-xl font-bold">🛒 Marketplace</h2>
+            <p className="text-gray-600 mt-2 text-center">
+              Buy & sell upcycled products.
+            </p>
+          </Link>
+
+          {/* Donation Center */}
+          <Link
+            to="/donate"
+            className="bg-white p-6 rounded-lg shadow-md flex flex-col justify-center items-center hover:bg-gray-200 transition"
+          >
+            <h2 className="text-xl font-bold">🎁 Donation Centers</h2>
+            <p className="text-gray-600 mt-2 text-center">
+              Find places to donate reusable items.
+            </p>
           </Link>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import {
@@ -193,9 +193,11 @@ const Impact = () => {
                 Redeem your eco-credits for discounts on sustainable products.
               </p>
               <p className="text-3xl font-bold mt-2">{ecoCredits}</p>
-              <button className="mt-4 bg-black text-white px-4 py-2 rounded-md">
-                View Rewards
-              </button>
+              <Link to="/marketplace">
+                <button className="mt-4 bg-black text-white px-4 py-2 rounded-md">
+                  Redeem
+                </button>
+              </Link>
             </div>
           </div>
         </div>

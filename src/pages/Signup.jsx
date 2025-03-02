@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase"; // Import Firestore
+import { auth, db } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 
@@ -15,6 +15,7 @@ const Signup = () => {
     setError(""); // Reset errors
 
     try {
+      // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -22,14 +23,15 @@ const Signup = () => {
       );
       const user = userCredential.user;
 
-      // Create Firestore user document with default ecoLevel and ecoCredits
+      // Set default user data in Firestore
       await setDoc(doc(db, "users", user.uid), {
-        email: user.email,
-        ecoLevel: 1,
         ecoCredits: 0,
+        wasteReduced: 0,
+        tasksCompleted: 0,
+        ecoRank: "Beginner",
       });
 
-      navigate("/dashboard"); // Redirect to dashboard after signup
+      navigate("/dashboard"); // Redirect after signup
     } catch (err) {
       setError(err.message);
     }
