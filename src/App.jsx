@@ -9,6 +9,7 @@ import Guide from "./pages/Guide";
 import Marketplace from "./pages/Marketplace";
 import Impact from "./pages/Impact";
 import DonationCenter from "./pages/DonationCentre";
+import SellProduct from "./pages/SellProduct";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/donate" element={<DonationCenter />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/sellproduct" element={<SellProduct />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/guide" element={<Guide />} />

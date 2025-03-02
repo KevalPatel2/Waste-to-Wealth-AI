@@ -1,84 +1,87 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { db, auth } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 const Marketplace = () => {
   const [user, setUser] = useState(null);
-  const [marketItems, setMarketItems] = useState([]);
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        navigate("/login"); // Redirect if not authenticated
+        navigate("/login");
       } else {
         setUser(user);
-        fetchMarketplaceItems();
       }
     });
 
     return () => unsubscribe();
   }, [navigate]);
 
-  // Fetch upcycled products from Firebase
-  const fetchMarketplaceItems = async () => {
-    const marketRef = collection(db, "marketplace");
-    const marketSnap = await getDocs(marketRef);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const querySnapshot = await getDocs(collection(db, "marketplace"));
+      setProducts(
+        querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+      );
+    };
 
-    if (!marketSnap.empty) {
-      const items = marketSnap.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setMarketItems(items);
-    }
-  };
+    fetchProducts();
+  }, []);
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   return (
     <div>
       <Navbar />
-      <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
-        {/* Hero Section */}
+      <div className="min-h-screen bg-gray-100 p-6">
         <div className="container mx-auto text-center mb-8">
           <span className="bg-gray-200 px-3 py-1 rounded-full text-sm font-medium">
-            🔄 Circular Economy Marketplace
+            🛒 Circular Economy Marketplace
           </span>
           <h1 className="text-5xl font-bold mt-4">
             Buy & Sell Upcycled Products
           </h1>
           <p className="mt-4 text-lg text-gray-600">
-            Explore sustainable products created through waste-to-wealth
-            initiatives.
+            List and discover sustainable products made from waste.
           </p>
         </div>
 
-        {/* Marketplace Products */}
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <h2 className="text-2xl font-bold col-span-full">
-            Upcycled Products
-          </h2>
-          {marketItems.length > 0 ? (
-            marketItems.map((item) => (
-              <div key={item.id} className="bg-white p-4 rounded-lg shadow-md">
-                <div className="w-full h-40 bg-gray-300 flex justify-center items-center rounded-md">
-                  <span className="text-gray-600">📷 Image Placeholder</span>
-                </div>
-                <h3 className="text-lg font-semibold mt-4">{item.name}</h3>
-                <p className="text-sm text-gray-600">{item.description}</p>
-                <p className="text-lg font-bold mt-2">${item.price}</p>
+        {/* Sell Product Button */}
+        <div className="text-center mb-6">
+          <Link to="/sellproduct">
+            <button className="bg-black text-white px-6 py-3 rounded-md">
+              Sell a Product
+            </button>
+          </Link>
+        </div>
+
+        {/* Display Products */}
+        <div className="container mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {products.length > 0 ? (
+            products.map((product) => (
+              <div
+                key={product.id}
+                className="bg-white p-6 rounded-lg shadow-md"
+              >
+                <img
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className="w-full h-48 object-cover rounded-lg mb-4"
+                />
+                <h3 className="text-xl font-bold">{product.name}</h3>
+                <p className="text-gray-600">{product.description}</p>
+                <p className="text-lg font-semibold mt-2">
+                  ${product.price ? Number(product.price).toFixed(2) : "N/A"}
+                </p>
               </div>
             ))
           ) : (
-            <p className="text-gray-600 col-span-full">
-              No products available.
-            </p>
+            <p className="text-center text-gray-600">No products listed yet.</p>
           )}
         </div>
       </div>

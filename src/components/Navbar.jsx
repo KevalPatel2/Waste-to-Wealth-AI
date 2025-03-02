@@ -25,17 +25,23 @@ const Navbar = () => {
   return (
     <nav className="flex justify-between items-center p-6 bg-white shadow-md">
       <h1 className="text-xl font-bold flex items-center space-x-2">
-        ♻️ Waste-to-Wealth
+        <Link to="/dashboard">♻️ Waste-to-Wealth</Link>
       </h1>
       <div className="hidden md:flex space-x-6">
         <Link to="/scanner" className="text-gray-600 hover:text-black">
-          Waste Classification
+          Classify Waste
         </Link>
         <Link to="/guide" className="text-gray-600 hover:text-black">
-          Upcycling Guide
+          Upcycling guide
         </Link>
         <Link to="/marketplace" className="text-gray-600 hover:text-black">
           Marketplace
+        </Link>
+        <Link to="/donate" className="text-gray-600 hover:text-black">
+          Donate now
+        </Link>
+        <Link to="/impact" className="text-gray-600 hover:text-black">
+          Eco-Rewards
         </Link>
       </div>
       <div className="space-x-4 flex">

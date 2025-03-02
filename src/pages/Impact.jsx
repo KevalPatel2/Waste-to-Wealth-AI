@@ -137,15 +137,15 @@ const Impact = () => {
 
   // Define badges
   const badges = [
-    { id: 1, name: "Beginner", image: "/badges/badge1.jpg", levelRequired: 1 },
+    { id: 1, name: "Beginner", image: "/badges/badges1.jpg", levelRequired: 1 },
     {
       id: 2,
       name: "Intermediate",
-      image: "/badges/badge2.jpg",
+      image: "/badges/badges2.jpg",
       levelRequired: 2,
     },
-    { id: 3, name: "Advanced", image: "/badges/badge3.jpg", levelRequired: 3 },
-    { id: 4, name: "Expert", image: "/badges/badge4.jpg", levelRequired: 4 },
+    { id: 3, name: "Advanced", image: "/badges/badges3.jpg", levelRequired: 3 },
+    { id: 4, name: "Expert", image: "/badges/badges4.jpg", levelRequired: 4 },
   ];
 
   if (!user) {
@@ -175,13 +175,12 @@ const Impact = () => {
                     <img
                       src={badge.image}
                       alt={badge.name}
-                      className={`w-16 h-16 ${
+                      className={`w-24 h-24 ${
                         ecoLevel < badge.levelRequired
                           ? "opacity-50 grayscale"
                           : ""
                       }`}
                     />
-                    <p className="text-sm mt-2 font-medium">{badge.name}</p>
                   </div>
                 ))}
               </div>
